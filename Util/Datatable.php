@@ -181,6 +181,8 @@ class Datatable
     {
         $request = $this->request->getCurrentRequest();
 
+
+
         $iTotalRecords = $this->queryBuilder->getTotalRecords();
         $iTotalDisplayRecords = $this->queryBuilder->getTotalDisplayRecords();
 

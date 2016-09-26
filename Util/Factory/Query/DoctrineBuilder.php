@@ -100,7 +100,7 @@ class DoctrineBuilder implements QueryInterface
      *
      * @return string
      */
-    protected function addSearch(QueryBuilder $queryBuilder)
+    protected function addSearch(QueryBuilder $queryBuilder, bool $isSearchInsensitive = true)
     {
         if ($this->search !== true) {
             return;
@@ -121,6 +121,12 @@ class DoctrineBuilder implements QueryInterface
         foreach ($searchFields as $i => $searchField) {
 
             $searchField = $this->getSearchField($searchField);
+
+            if($isSearchInsensitive) {
+                $searchField = 'LOWER(' . $searchField . ')';
+                $globalSearch['value'] = mb_strtolower($globalSearch['value']);
+                $columns[$i]['search']['value'] = mb_strtolower($columns[$i]['search']['value']);
+            }
 
             // Global filtering
             if ((!empty($globalSearch) || $globalSearch['value'] == '0') && $columns[$i]['searchable'] === "true") {
