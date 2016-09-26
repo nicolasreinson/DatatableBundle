@@ -82,6 +82,11 @@ class DoctrineBuilder implements QueryInterface
     protected $filteringType = array();
 
     /**
+     * @var bool
+     */
+    protected $_searchCaseInsensitive = true;
+
+    /**
      * class constructor
      *
      * @param EntityManager $entityManager
@@ -100,7 +105,7 @@ class DoctrineBuilder implements QueryInterface
      *
      * @return string
      */
-    protected function addSearch(QueryBuilder $queryBuilder, bool $isSearchInsensitive = true)
+    protected function addSearch(QueryBuilder $queryBuilder)
     {
         if ($this->search !== true) {
             return;
@@ -122,7 +127,7 @@ class DoctrineBuilder implements QueryInterface
 
             $searchField = $this->getSearchField($searchField);
 
-            if($isSearchInsensitive) {
+            if($this->isSearchCaseInsensitive()) {
                 $searchField = 'LOWER(' . $searchField . ')';
                 $globalSearch['value'] = mb_strtolower($globalSearch['value']);
                 $columns[$i]['search']['value'] = mb_strtolower($columns[$i]['search']['value']);
@@ -503,6 +508,20 @@ class DoctrineBuilder implements QueryInterface
     {
         $this->search = $search;
         return $this;
+    }
+
+    /**
+     * @param bool $caseInsensitive
+     */
+    public function setSearchCaseInsensitive(bool $caseInsensitive){
+        $this->_searchCaseInsensitive = $caseInsensitive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSearchCaseInsensitive(){
+        return $this->_searchCaseInsensitive;
     }
 
     /**

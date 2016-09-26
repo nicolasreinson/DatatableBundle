@@ -128,9 +128,13 @@ class Datatable
         $this->rendererEngine = $renderer;
         $this->config = $config;
 
+
+
         self::$currentInstance = $this;
 
         $this->applyDefaults();
+
+
     }
 
     /**
@@ -142,6 +146,10 @@ class Datatable
     {
         if (isset($this->config['all'])) {
             $this->search = $this->config['all']['search'];
+        }
+
+        if (isset($this->config['js']['search']['caseInsensitive'])) {
+            $this->queryBuilder->setSearchCaseInsensitive($this->config['js']['search']['caseInsensitive']);
         }
     }
 
@@ -180,8 +188,6 @@ class Datatable
     public function execute()
     {
         $request = $this->request->getCurrentRequest();
-
-
 
         $iTotalRecords = $this->queryBuilder->getTotalRecords();
         $iTotalDisplayRecords = $this->queryBuilder->getTotalDisplayRecords();
@@ -535,6 +541,8 @@ class Datatable
         $this->queryBuilder->setSearch($globalSearch || $this->search);
         return $this;
     }
+
+
 
     /**
      * set datatable identifier
