@@ -528,6 +528,45 @@ class DatatableTest extends BaseClient
         $this->assertInternalType('boolean', $this->datatable->getSearch());
     }
 
+    public function test_getSearchInsensitive()
+    {
+        $this->initDatatable(array(
+            "search" => array("regex" => "false", "value" => "laptop"),
+            "columns" => array(
+                0 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                ),
+                1 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                ),
+                2 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                ),
+                3 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                )
+            )
+        ));
+
+        $this->datatable
+            ->setEntity('Waldo\DatatableBundle\Tests\Functional\Entity\Product', 'p')
+            ->setFields(
+                array(
+                    "title"        => "p.name",
+                    "id"            => 'p.id',
+                    "_identifier_" => 'p.id')
+            )
+            ->setSearch(true);
+
+        $data = $this->datatable->execute();
+
+        $this->assertEquals('{"draw":0,"recordsTotal":"2","recordsFiltered":"1","data":[["Laptop",1,1]]}', $data->getContent());
+    }
+
     public function test_getSearchWithSubQuery()
     {
         $this->initDatatable(array(
