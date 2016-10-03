@@ -336,7 +336,7 @@ class DatatableTest extends BaseClient
 
         $data = $this->datatable->execute();
 
-        $this->assertEquals('{"draw":0,"recordsTotal":2,"recordsFiltered":2,"data":[["Laptop",1],["Desktop",2]]}', $data->getContent());
+        $this->assertEquals('{"draw":0,"recordsTotal":"2","recordsFiltered":"2","data":[["Laptop",1],["Desktop",2]]}', $data->getContent());
     }
 
     public function test_multipleAlias()
@@ -353,7 +353,7 @@ class DatatableTest extends BaseClient
 
 
         $data = $this->datatable->execute();
-        $this->assertEquals('{"draw":0,"recordsTotal":2,"recordsFiltered":2,"data":[["Laptop",1],["Laptop",2]]}', $data->getContent());
+        $this->assertEquals('{"draw":0,"recordsTotal":"2","recordsFiltered":"2","data":[["Laptop",1],["Laptop",2]]}', $data->getContent());
 
     }
 
@@ -512,9 +512,8 @@ class DatatableTest extends BaseClient
 
         $r = $datatable->getQueryBuilder()->getData(null);
 
-        $this->assertArrayHasKey("total", $r[1][0]);
-        $this->assertEquals(1, $r[0][0][1]);
-        $this->assertEquals(1, $r[1][0]['total']);
+        $this->assertEquals(1, $r[0][1]);
+        $this->assertEquals(2, $r[1][1]);
     }
 
     public function test_getSearch()
