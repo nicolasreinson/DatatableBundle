@@ -189,7 +189,12 @@ class Datatable
     {
         $request = $this->request->getCurrentRequest();
 
-        $iTotalRecords = $this->queryBuilder->getTotalRecords();
+        if (isset($this->config['js']['language']['infoFiltered']) && empty($this->config['js']['language']['infoFiltered']) ) {
+            $iTotalRecords = 0;
+        }else{
+            $iTotalRecords = $this->queryBuilder->getTotalRecords();
+        }
+
         $iTotalDisplayRecords = $this->queryBuilder->getTotalDisplayRecords();
 
         $data = $this->queryBuilder->getData();
