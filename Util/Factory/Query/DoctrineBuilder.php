@@ -283,9 +283,8 @@ class DoctrineBuilder implements QueryInterface
         }
     }
 
+
     /**
-     * get data
-     *
      * @return array
      */
     public function getData()
@@ -333,7 +332,6 @@ class DoctrineBuilder implements QueryInterface
                     ->setFirstResult((int) $request->get('start'));
         }
 
-        $objects = $query->getResult(Query::HYDRATE_OBJECT);
         $maps = $query->getResult(Query::HYDRATE_SCALAR);
         $data = array();
 
@@ -362,7 +360,7 @@ class DoctrineBuilder implements QueryInterface
             $data[] = $item;
         }
 
-        return array($data, $objects);
+        return $data;
     }
 
     /**
