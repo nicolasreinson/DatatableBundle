@@ -123,8 +123,8 @@ class DoctrineBuilderTest extends BaseClient
 
         $res = $doctrineBuilder->getData();
 
-        $this->assertCount(1, $res[0]);
-        $this->assertEquals("Laptop", $res[0][0][0]);
+        $this->assertCount(1, $res);
+        $this->assertEquals("Laptop", $res[0][0]);
     }
 
     /**

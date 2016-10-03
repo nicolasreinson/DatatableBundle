@@ -85,11 +85,11 @@ class Renderer
      * apply foreach given cell content the given (if exists) view
      *
      * @param array $data
-     * @param array $objects
+     * @param array $fields
      *
      * @return void
      */
-    public function applyTo(array &$data, array $objects)
+    public function applyTo(array &$data, array $fields )
     {
         foreach ($data as $row_index => $row) {
             $identifier_raw = $data[$row_index][$this->identifierIndex];
@@ -103,7 +103,7 @@ class Renderer
                 }
                 $params = array_merge($params,
                         array(
-                    'dt_obj' => $objects[$row_index],
+                    'dt_obj' => array_combine(array_flip($fields), $data[$row_index]),
                     'dt_item' => $data[$row_index][$column_index],
                     'dt_id' => $identifier_raw,
                     'dt_line' => $data[$row_index]

@@ -104,6 +104,8 @@ class DoctrineBuilder implements QueryInterface
      * get the search DQL
      *
      * @return string
+     *
+     * @todo : make case insentive search workable with subqueries
      */
     protected function addSearch(QueryBuilder $queryBuilder)
     {
@@ -127,11 +129,7 @@ class DoctrineBuilder implements QueryInterface
 
             $searchField = $this->getSearchField($searchField);
 
-            if($this->isSearchCaseInsensitive()) {
-                $searchField = 'LOWER(' . $searchField . ')';
-                $globalSearch['value'] = mb_strtolower($globalSearch['value']);
-                $columns[$i]['search']['value'] = mb_strtolower($columns[$i]['search']['value']);
-            }
+
 
             // Global filtering
             if ((!empty($globalSearch) || $globalSearch['value'] == '0') && $columns[$i]['searchable'] === "true") {
@@ -140,13 +138,15 @@ class DoctrineBuilder implements QueryInterface
 
                 if ($this->isStringDQLQuery($searchField)) {
 
-                    $orExpr->add(
-                            $queryBuilder->expr()->eq($searchField, ':' . $qbParam)
-                    );
+                    $orExpr->add($queryBuilder->expr()->eq($searchField, ':' . $qbParam));
                     $queryBuilder->setParameter($qbParam, $globalSearch['value']);
 
                 } else {
-
+                    if($this->isSearchCaseInsensitive()) {
+                        $searchField = $queryBuilder->expr()->lower($searchField);
+                        $globalSearch['value'] = mb_strtolower($globalSearch['value']);
+                        $columns[$i]['search']['value'] = mb_strtolower($columns[$i]['search']['value']);
+                    }
                     $orExpr->add($queryBuilder->expr()->like($searchField, ":" . $qbParam));
                     $queryBuilder->setParameter($qbParam, "%" . $globalSearch['value'] . "%");
 
@@ -157,6 +157,11 @@ class DoctrineBuilder implements QueryInterface
             $searchName = "sSearch_" . $i;
 
             if($columns[$i]['searchable'] === "true" && $columns[$i]['search']['value'] != "") {
+
+                if($this->isSearchCaseInsensitive()) {
+                    $searchField = $queryBuilder->expr()->lower($searchField);
+                    $columns[$i]['search']['value'] = mb_strtolower($columns[$i]['search']['value']);
+                }
 
                 $queryBuilder->andWhere($queryBuilder->expr()->like($searchField, ":" . $searchName));
 
@@ -278,9 +283,8 @@ class DoctrineBuilder implements QueryInterface
         }
     }
 
+
     /**
-     * get data
-     *
      * @return array
      */
     public function getData()
@@ -328,7 +332,6 @@ class DoctrineBuilder implements QueryInterface
                     ->setFirstResult((int) $request->get('start'));
         }
 
-        $objects = $query->getResult(Query::HYDRATE_OBJECT);
         $maps = $query->getResult(Query::HYDRATE_SCALAR);
         $data = array();
 
@@ -357,7 +360,7 @@ class DoctrineBuilder implements QueryInterface
             $data[] = $item;
         }
 
-        return array($data, $objects);
+        return $data;
     }
 
     /**

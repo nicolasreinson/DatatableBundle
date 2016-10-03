@@ -295,7 +295,7 @@ class DatatableTest extends BaseClient
                             "_identifier_" => 'p.id'))
                 ->getQueryBuilder()->getData(null);
 
-        $this->assertEquals("Laptop", $data[0][0][0]);
+        $this->assertEquals("Laptop", $data[0][0]);
     }
 
     public function test_getOrderType()
@@ -326,7 +326,7 @@ class DatatableTest extends BaseClient
 
     public function test_alias()
     {
-        $r = $this->datatable
+        $this->datatable
                 ->setEntity('Waldo\DatatableBundle\Tests\Functional\Entity\Product', 'p')
                 ->setFields(
                         array(
@@ -334,13 +334,14 @@ class DatatableTest extends BaseClient
                             "_identifier_" => 'p.id')
                 )->getQueryBuilder()->getData(null);
 
+        $data = $this->datatable->execute();
 
-        $this->assertArrayHasKey("someAliasName", $r[1][0]);
+        $this->assertEquals('{"draw":0,"recordsTotal":"2","recordsFiltered":"2","data":[["Laptop",1],["Desktop",2]]}', $data->getContent());
     }
 
     public function test_multipleAlias()
     {
-        $r = $this->datatable
+        $this->datatable
                 ->setEntity('Waldo\DatatableBundle\Tests\Functional\Entity\Product', 'p')
                 ->setFields(
                         array(
@@ -351,7 +352,9 @@ class DatatableTest extends BaseClient
                 )->getQueryBuilder()->getData(null);
 
 
-        $this->assertArrayHasKey("someAliasName", $r[1][0]);
+        $data = $this->datatable->execute();
+        $this->assertEquals('{"draw":0,"recordsTotal":"2","recordsFiltered":"2","data":[["Laptop",1],["Laptop",2]]}', $data->getContent());
+
     }
 
     public function test_setWhere()
@@ -509,9 +512,8 @@ class DatatableTest extends BaseClient
 
         $r = $datatable->getQueryBuilder()->getData(null);
 
-        $this->assertArrayHasKey("total", $r[1][0]);
-        $this->assertEquals(1, $r[0][0][1]);
-        $this->assertEquals(1, $r[1][0]['total']);
+        $this->assertEquals(1, $r[0][1]);
+        $this->assertEquals(2, $r[1][1]);
     }
 
     public function test_getSearch()
@@ -526,6 +528,45 @@ class DatatableTest extends BaseClient
         ;
 
         $this->assertInternalType('boolean', $this->datatable->getSearch());
+    }
+
+    public function test_getSearchInsensitive()
+    {
+        $this->initDatatable(array(
+            "search" => array("regex" => "false", "value" => "laptop"),
+            "columns" => array(
+                0 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                ),
+                1 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                ),
+                2 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                ),
+                3 => array(
+                    "searchable" => "true",
+                    "search" => array("regex" => "false", "value" => "")
+                )
+            )
+        ));
+
+        $this->datatable
+            ->setEntity('Waldo\DatatableBundle\Tests\Functional\Entity\Product', 'p')
+            ->setFields(
+                array(
+                    "title"        => "p.name",
+                    "id"            => 'p.id',
+                    "_identifier_" => 'p.id')
+            )
+            ->setSearch(true);
+
+        $data = $this->datatable->execute();
+
+        $this->assertEquals('{"draw":0,"recordsTotal":"2","recordsFiltered":"1","data":[["Laptop",1,1]]}', $data->getContent());
     }
 
     public function test_getSearchWithSubQuery()
@@ -564,10 +605,6 @@ class DatatableTest extends BaseClient
                 )
                 ->setSearch(true)
                 ;
-
-        $data = $this->datatable->execute();
-
-        $this->assertEquals('{"draw":0,"recordsTotal":"2","recordsFiltered":"1","data":[["Laptop",1,1]]}', $data->getContent());
     }
 
     public function test_setRenderders()

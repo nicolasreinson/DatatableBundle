@@ -189,10 +189,15 @@ class Datatable
     {
         $request = $this->request->getCurrentRequest();
 
-        $iTotalRecords = $this->queryBuilder->getTotalRecords();
+        if (isset($this->config['js']['language']['infoFiltered']) && empty($this->config['js']['language']['infoFiltered']) ) {
+            $iTotalRecords = 0;
+        }else{
+            $iTotalRecords = $this->queryBuilder->getTotalRecords();
+        }
+
         $iTotalDisplayRecords = $this->queryBuilder->getTotalDisplayRecords();
 
-        list($data, $objects) = $this->queryBuilder->getData();
+        $data = $this->queryBuilder->getData();
 
         $id_index = array_search('_identifier_', array_keys($this->getFields()));
         $ids = array();
@@ -213,7 +218,7 @@ class Datatable
         }
 
         if (!is_null($this->rendererObj)) {
-            $this->rendererObj->applyTo($data, $objects);
+            $this->rendererObj->applyTo($data, $this->getFields());
         }
 
         if (!empty($this->multiple)) {
