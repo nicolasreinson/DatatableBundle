@@ -186,9 +186,7 @@ class Datatable
      * @return JsonResponse
      */
     public function execute()
-    {print 'here';
-
-        exit;
+    {
         $request = $this->request->getCurrentRequest();
 
         if (isset($this->config['js']['language']['infoFiltered']) && empty($this->config['js']['language']['infoFiltered']) ) {

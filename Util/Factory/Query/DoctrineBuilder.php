@@ -187,7 +187,7 @@ class DoctrineBuilder implements QueryInterface
         }
 
         if ((!empty($globalSearch) || $globalSearch == '0') && $orExpr->count() > 0) {
-            $queryBuilder->andWhere($orExpr);
+            $queryBuilder->orWhere($orExpr);
         }
     }
 
