@@ -132,7 +132,7 @@ class DoctrineBuilder implements QueryInterface
 
 
             // Global filtering
-            if ((!empty($globalSearch) || $globalSearch['value'] == '0') && $columns[$i]['searchable'] === "true") {
+            if ((!empty($globalSearch)['value'] || $globalSearch['value'] == '0') && $columns[$i]['searchable'] === "true") {
 
                 $qbParam = "sSearch_global_" . $i;
 
