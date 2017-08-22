@@ -147,7 +147,7 @@ class DoctrineBuilder implements QueryInterface
                         $globalSearch['value'] = mb_strtolower($globalSearch['value']);
                         $columns[$i]['search']['value'] = mb_strtolower($columns[$i]['search']['value']);
                     }
-                    $orExpr->add($queryBuilder->expr()->like($searchField, ":" . $qbParam));
+                     $orExpr->add($queryBuilder->expr()->like("unaccent(".$searchField.")", "unaccent(:".$qbParam.")"));
                     $queryBuilder->setParameter($qbParam, "%" . $globalSearch['value'] . "%");
 
                 }
@@ -163,7 +163,7 @@ class DoctrineBuilder implements QueryInterface
                     $columns[$i]['search']['value'] = mb_strtolower($columns[$i]['search']['value']);
                 }
 
-                $queryBuilder->andWhere($queryBuilder->expr()->like($searchField, ":" . $searchName));
+                $queryBuilder->andWhere($queryBuilder->expr()->like("unaccent(".$searchField.")", "unaccent(:".$searchName.")"));
 
                 if (array_key_exists($i, $filteringType)) {
                     switch ($filteringType[$i]) {

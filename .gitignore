@@ -1,3 +1,6 @@
 /vendor/
 !/vendor/vendors.php
 composer.lock
+.DS_Store
+.idea/
+nbproject/
